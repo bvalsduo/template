@@ -7,12 +7,14 @@ from aiogram.fsm.context import FSMContext
 
 from data.jokes import usual_cat_jokes, vip_cat_jokes
 from filters.is_category import IsCategory
-from filters.is_vip_user_ import IsVipUser, IsVipUser_func
+from filters.is_vip_user import IsVipUser, IsVipUser_func
+from filters.is_admin import IsAdmin, IsAdmin_func
 from keyboards.user_keyboards import usual_cat_jokes_key, usual_cat_jokes_inds, read_keyboard
 from keyboards.vip_user_keyboards import vip_cat_jokes_key, vip_cat_jokes_inds
 from states.FSM_reading import fsm_reading
 from data.config import token
-from routers import anecdots_classic, anecdots_vip
+from routers import anecdots_classic, anecdots_vip, admin_panel
+
 
 
 
@@ -34,8 +36,9 @@ bot = Bot(token=token)
 @dis.message(CommandStart())
 async def bot_start(message: Message):
     vip_usual = {True: 'VIP', False: 'USUAL'}
+    ad_us_dct = {True: 'ADMIN', False: 'USUAL'}
     await bot.delete_webhook(drop_pending_updates=True)
-    await message.answer(f'Hey! - {vip_usual[IsVipUser_func(message)]}', reply_markup=usual_cat_jokes_key)
+    await message.answer(f'Hey! - {vip_usual[IsVipUser_func(message)]}\n and {ad_us_dct[IsAdmin_func(message)]}', reply_markup=usual_cat_jokes_key)
     log.info('Starting bot')
 
 
@@ -63,7 +66,7 @@ async def set_commands(bot: Bot):
 if __name__ == '__main__':
     dis.include_router(router=anecdots_classic.rout_us)
     dis.include_router(router=anecdots_vip.rout_vip)
-
+    dis.include_router(router=admin_panel.rout_admin)
 
     dis.startup.register(set_commands)
     dis.run_polling(bot)

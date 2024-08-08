@@ -8,7 +8,7 @@ from aiogram.filters import StateFilter
 
 from data.jokes import usual_cat_jokes, vip_cat_jokes
 from filters.is_category import IsCategory
-from filters.is_vip_user_ import IsVipUser, IsVipUser_func
+from filters.is_vip_user import IsVipUser, IsVipUser_func
 from keyboards.user_keyboards import usual_cat_jokes_key, usual_cat_jokes_inds, read_keyboard
 from keyboards.vip_user_keyboards import vip_cat_jokes_key, vip_cat_jokes_inds
 from states.FSM_reading import fsm_reading

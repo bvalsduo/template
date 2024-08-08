@@ -4,8 +4,8 @@ from data.config import admin_ids
 
 
 class IsAdmin(BaseFilter):
-    def __call__(self, message: Message):
-        return message.from_user.id in admin_ids
+    async def __call__(self, message: Message) -> bool:
+        return int(message.from_user.id) in admin_ids
 
 
 def IsAdmin_func(message: Message):

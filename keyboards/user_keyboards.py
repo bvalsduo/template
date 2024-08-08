@@ -1,4 +1,4 @@
-from aiogram.utils.keyboard import (InlineKeyboardButton, InlineKeyboardBuilder,
+from aiogram.utils.keyboard import (InlineKeyboardMarkup, InlineKeyboardButton, InlineKeyboardBuilder,
                                     ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardBuilder)
 from data.jokes import vip_cat_jokes
 
