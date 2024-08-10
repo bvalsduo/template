@@ -19,7 +19,7 @@ rout_vip.message.filter(IsVipUser())
 rout_vip.callback_query.filter(IsVipUser())
 
 # category selection
-@rout_vip.message(IsCategory())
+@rout_vip.message(IsCategory(), StateFilter(default_state))
 async def anecdots(message: Message, state: FSMContext):
     log.info('VIP user')
     await message.answer(f'{vip_cat_jokes[message.text][1]}',

@@ -12,7 +12,7 @@ from filters.is_vip_user import IsVipUser, IsVipUser_func
 from filters.is_admin import IsAdmin, IsAdmin_func
 from keyboards.user_keyboards import usual_cat_jokes_key, usual_cat_jokes_inds, read_keyboard
 from keyboards.vip_user_keyboards import vip_cat_jokes_key, vip_cat_jokes_inds
-from keyboards.admin_keyboards import admin_actions, vip_us_key
+from keyboards.admin_keyboards import admin_actions, ad_vip_us_key
 from states.FSM_reading import fsm_reading
 from states.FSM_admin_panel import Admin
 
@@ -37,63 +37,98 @@ rout_admin.callback_query.filter(IsAdmin())
 
 
 
+# /done command
+@rout_admin.message(Command(commands=['done']), ~StateFilter(default_state))
+async def admin_panel_done(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer('data is saved')
+    await message.answer(f'что то еще?', reply_markup=admin_actions().as_markup(resize_keyboard=True))
+    log.info(f'command done, exit from state')
+
 
 
 # /admin command
 @rout_admin.message(Command(commands=['admin']), StateFilter(default_state))
-async def admin_panel_start(message: Message):
+async def admin_panel_start(message: Message, state: FSMContext):
+    await state.set_state(Admin.choose_state)
     await message.answer(f'что хочешь сделать', reply_markup=admin_actions().as_markup(resize_keyboard=True))
     log.info('entering an admin panel')
 
+
+
 # choose state
-@rout_admin.callback_query(StateFilter(default_state))
+@rout_admin.callback_query(StateFilter(Admin.choose_state))
 async def start_actions(callback: CallbackQuery, state: FSMContext):
-    states_dct = {'add cat': Admin.add_cat1, 'add joke': Admin.set_vip_us,
+    states_dct = {'add cat': Admin.add_cat1, 'add joke': Admin.add_joke1,
                    'delete cat': Admin.delete_cat, 'delete joke': Admin.delete_joke,
                    'more options': Admin.more_options}
     await state.set_state(state=states_dct[callback.data])
-    await callback.message.answer(f'Эта категория для вип или обычного пользователя?\nНадо написать Vip либо Usual')
+    await callback.message.answer(f'Эта категория вип или обычного пользователя?', reply_markup=ad_vip_us_key)
+    log.info(f'set state add_cat1')
 
 
-
+####################################################################
+####################################################################
 # add category state, for whom
-@rout_admin.message(StateFilter(Admin.add_cat1))
-async def add_cat_for_whom(message: Message, state: FSMContext):
-    if message.text.lower() in ['vip', 'usual']:
-        await state.update_data(for_whom=message.text.lower())
-        await message.answer(f'принятые данные: {(await state.get_data())["for_whom"]}\n/back чтобы вернуться и поменять данные')
-        await state.set_state(Admin.add_cat2)
-        await message.answer('Введите название категории')
-        log.info(f'state: add cat1 ending right')
-    else:
-        await message.answer('Неккоректный ввод')
-        log.info(f'state: add cat1 ending wrong')
+@rout_admin.callback_query(StateFilter(Admin.add_cat1))
+async def add_cat_for_whom(callback: CallbackQuery, state: FSMContext):
+    user_dct = {'vip': 'VIP', 'usual': 'USUAl'}
+    await state.update_data(cat_for_whom=user_dct[callback.data])
+    await state.set_state(Admin.add_cat2)
+    await callback.message.answer('Введите название для новой категории')
+    log.info(f'add_cat1 is succes, set state add_cat2')
 
 
 # add category state, name of category
 @rout_admin.message(StateFilter(Admin.add_cat2))
 async def add_cat_name(message: Message, state: FSMContext):
     await state.update_data(cat_name=message.text)
-    await message.answer(f'принятые данные: {(await state.get_data())["cat_name"]}\n/back чтобы вернуться и поменять данные')
+    await message.answer(f'Название категории:\n{(await state.get_data())["cat_name"]}\n/back чтобы вернуться и поменять данные')
+    log.info('add_cat2 is succes, set state choose_state')
 
-    # await state.set_state(Admin.set_vip_us)
-    # await message.answer('выберите vip или usual категорию для нового анекдота', reply_markup=vip_us_key)
+    await message.answer(f'что то еще?', reply_markup=admin_actions().as_markup(resize_keyboard=True))
+    await state.set_state(Admin.choose_state)
 
-
-# set vip/usual categories
-@rout_admin.callback_query(StateFilter(Admin.set_vip_us))
-async def set_vip_us(callback: CallbackQuery, state: FSMContext):
-    await state.update_data(set_cat=callback.data)
-    await callback.message.answer(f'принятые данные: {(await state.get_data())["set_cat"]}')
+####################################################################
+####################################################################
 
 
 
+# add joke state, for whom
+@rout_admin.callback_query(StateFilter(Admin.add_joke1))
+async def add_joke_for_whom(callback: CallbackQuery, state: FSMContext):
+    user_dct = {'vip': 'VIP', 'usual': 'USUAL'}
+    cat_dct = {'VIP': vip_cat_jokes_key, 'USUAL': usual_cat_jokes_key}
+    await state.update_data(joke_for_whom=user_dct[callback.data])
+    await state.set_state(Admin.add_joke2)
+    await callback.message.answer('Выбери категорию в которой будет новый анекдот', reply_markup=cat_dct[(await state.get_data())['joke_for_whom']])
+
+    log.info(f'add_cat1 is succes, set state add_cat2')
 
 
-# add joke state
-@rout_admin.message(StateFilter(Admin.add_joke1))
+
+# add joke state, category
+@rout_admin.message(StateFilter(Admin.add_joke2))
 async def add_joke_cat(message: Message, state: FSMContext):
-    pass
+    await state.update_data(category=message.text)
+    await message.answer('Введите текст нового анекдота')
+    await state.set_state(Admin.add_joke3)
+    log.info(f'add_joke2 is succes')
+
+
+# add joke state, text of joke
+@rout_admin.message(StateFilter(Admin.add_joke3))
+async def add_joke_text(message: Message, state: FSMContext):
+    await state.update_data(joke_text=message.text)
+    await message.answer(f'Анекдот:\n{(await state.get_data())["joke_text"]}\n/back чтобы вернуться и поменять данные')
+    jokes_cat_dct = {'VIP': vip_cat_jokes, 'USUAL': usual_cat_jokes}
+    jokes_cat_dct[(await state.get_data())['joke_for_whom']][(await state.get_data())['category']][len(jokes_cat_dct[(await state.get_data())['joke_for_whom']][(await state.get_data())['category']]) + 1] = (await state.get_data())['joke_text']
+    log.info('anecdot is added, set state choose_state')
+
+    await message.answer(f'что то еще?', reply_markup=admin_actions().as_markup(resize_keyboard=True))
+    await state.set_state(Admin.choose_state)
+
+
 
 # delete category state
 @rout_admin.message(StateFilter(Admin.delete_cat))

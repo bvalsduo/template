@@ -21,11 +21,10 @@ def admin_actions():
     return bldr
 
 
-vip_us_key = InlineKeyboardMarkup(inline_keyboard=[
+ad_vip_us_key = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='VIP', callback_data='vip')],
     [InlineKeyboardButton(text='USUAL', callback_data='usual')],
 ], resize_keyboard=True, sizes=2)
-vip_us_key = vip_us_key
 
 
 
