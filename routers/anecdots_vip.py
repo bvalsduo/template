@@ -22,11 +22,11 @@ rout_vip.callback_query.filter(IsVipUser())
 @rout_vip.message(IsCategory(), StateFilter(default_state))
 async def anecdots(message: Message, state: FSMContext):
     log.info('VIP user')
-    await message.answer(f'{vip_cat_jokes[message.text][1]}',
+    await message.answer(f'{vip_cat_jokes[message.text][0]}',
                          reply_markup=read_keyboard(index=1, count=len(vip_cat_jokes[message.text])).as_markup(resize_keyboard=True))
-    await state.update_data(index=1)
+    await state.update_data(index=0)
     await state.update_data(category=message.text)
-    await state.update_data(count=len(usual_cat_jokes[message.text]))
+    # await state.update_data(count=len(usual_cat_jokes[message.text]))
     await state.update_data(count_vip=len(vip_cat_jokes[message.text]))
     await state.set_state(fsm_reading.reading)
 
@@ -41,23 +41,23 @@ async def reading_state(message: Message, state: FSMContext):
     try:
         if not message.text.count('/'):
             dct_moves = {'<<': 1, '>>': -1}
-            if ((await state.get_data())['index'] - dct_moves[message.text]) <= 0:
-                await message.answer('Назад? только вперед!', reply_markup=read_keyboard(index=(await state.get_data())['index'],
+            if ((await state.get_data())['index'] - dct_moves[message.text]) <= -1:
+                await message.answer('Назад? только вперед!', reply_markup=read_keyboard(index=(await state.get_data())['index'] + 1,
                                                                    count=(await state.get_data())['count_vip']).as_markup(resize_keyboard=True))
                 log.debug('error limits - protect')
-            elif ((await state.get_data())['index'] - dct_moves[message.text]) >= int((await state.get_data())['count_vip']):
-                await message.answer('Что бы смотреть больше анекдотов и больше категорий,\nжми- /vip  и покупай по скидке',
-                                     reply_markup=read_keyboard(index=(await state.get_data())['index'],
+            elif ((await state.get_data())['index'] - dct_moves[message.text]) > int((await state.get_data())['count_vip'] - 1):
+                await message.answer('а больше нету',
+                                     reply_markup=read_keyboard(index=(await state.get_data())['index'] + 1,
                                                                 count=(await state.get_data())['count_vip']).as_markup(resize_keyboard=True))
-                log.debug('no vip user - protect')
+                log.debug('error limits - protect')
             else:
                 await state.update_data(index=(await state.get_data())['index'] - dct_moves[message.text])
                 await message.answer(vip_cat_jokes[(await state.get_data())['category']][(await state.get_data())['index']],
-                                     reply_markup=read_keyboard(index=(await state.get_data())['index'],
+                                     reply_markup=read_keyboard(index=(await state.get_data())['index'] + 1,
                                                                 count=(await state.get_data())['count_vip']).as_markup(resize_keyboard=True))
                 log.info(f'sending anecdot by new index - {(await state.get_data())["index"]}')
         else:
-            await message.answer((await state.get_data())['category'], reply_markup=usual_cat_jokes_inds((await state.get_data())['category']).as_markup())
+            await message.answer((await state.get_data())['category'], reply_markup=vip_cat_jokes_inds((await state.get_data())['category']).as_markup())
             log.info('sending keyboard with anecdots')
     except KeyError:
         await message.answer('Для перехода к другому анекдоту нужно нажать кнопку снизу')
@@ -68,7 +68,7 @@ async def reading_state(message: Message, state: FSMContext):
 async def reading_state_cancel(message: Message, state: FSMContext):
     await state.clear()
     log.info('exit a reading state')
-    await message.answer('You go to categories', reply_markup=vip_cat_jokes_key)
+    await message.answer('You go to categories', reply_markup=vip_cat_jokes_key().as_markup(resize_keyboar=True, input_field_placeholder='Кнопки ниже'))
 
 
 # indexes inline keyboard
@@ -78,7 +78,7 @@ async def reading_state_callback_answer(callback: CallbackQuery, state: FSMConte
         ind = int(callback.data.split('-')[0])
         await state.update_data(index=ind)
         await callback.message.answer(vip_cat_jokes[(await state.get_data())['category']][ind],
-                                      reply_markup=read_keyboard(index=ind, count=(await state.get_data())['count_vip']).as_markup(resize_keyboard=True))
+                                      reply_markup=read_keyboard(index=ind + 1, count=(await state.get_data())['count_vip']).as_markup(resize_keyboard=True))
 
         log.info(f'callback is handled, index - {(await state.get_data())["index"]}')
     else:

@@ -36,9 +36,9 @@ bot = Bot(token=token)
 @dis.message(CommandStart())
 async def bot_start(message: Message):
     vip_usual = {True: 'VIP', False: 'USUAL'}
-    ad_us_dct = {True: 'ADMIN', False: 'USUAL'}
+    ad_us = {True: 'ADMIN', False: 'USUAL'}
     await bot.delete_webhook(drop_pending_updates=True)
-    await message.answer(f'Hey! - {vip_usual[IsVipUser_func(message)]}\n and {ad_us_dct[IsAdmin_func(message)]}', reply_markup=usual_cat_jokes_key)
+    await message.answer(f'Hey! - {vip_usual[IsVipUser_func(message)]}\n and {ad_us[IsAdmin_func(message)]}', reply_markup=usual_cat_jokes_key().as_markup(resize_keyboar=True, input_field_placeholder='Кнопки ниже'))
     log.info('Starting bot')
 
 

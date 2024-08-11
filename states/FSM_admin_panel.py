@@ -11,8 +11,10 @@ class Admin(StatesGroup):
     add_joke1 = State()
     add_joke2 = State()
     add_joke3 = State()
-    delete_cat = State()
-    delete_joke = State()
+    del_cat1 = State()
+    del_cat2 = State()
+    del_joke1 = State()
+    del_joke2 = State()
     more_options = State()
 
 
