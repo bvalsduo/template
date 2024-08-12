@@ -4,17 +4,18 @@ from aiogram.fsm.state import State, StatesGroup, default_state
 
 
 class Admin(StatesGroup):
-    choose = State()
-    choose_state = State()
-    add_cat1 = State()
-    add_cat2 = State()
-    add_joke1 = State()
-    add_joke2 = State()
-    add_joke3 = State()
-    del_cat1 = State()
-    del_cat2 = State()
-    del_joke1 = State()
-    del_joke2 = State()
+    selection_state = State()
+    add_cat_level = State()
+    add_cat_name = State()
+    add_joke_level = State()
+    add_joke_cat = State()
+    add_joke_text = State()
+    del_cat_level = State()
+    del_cat = State()
+    del_joke_level = State()
+    del_joke_inds = State()
+    del_joke_ind = State()
+    del_joke = State()
     more_options = State()
 
 

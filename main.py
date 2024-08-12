@@ -16,11 +16,8 @@ from data.config import token
 from routers import anecdots_classic, anecdots_vip, admin_panel
 
 
-
-
 dis = Dispatcher()
 bot = Bot(token=token)
-
 
 
 # админ панель, а вот здесь вот эти Reply кнопки мешают. Наверное сделаю еще один модуль с роутером
@@ -31,14 +28,13 @@ bot = Bot(token=token)
 # надо разобраться что такое Midleware, он вообще нужен этому проекту
 
 
-
 # /start
 @dis.message(CommandStart())
 async def bot_start(message: Message):
-    vip_usual = {True: 'VIP', False: 'USUAL'}
-    ad_us = {True: 'ADMIN', False: 'USUAL'}
+    level = {True: 'VIP', False: 'USUAL'}
+    ad_level = {True: 'ADMIN', False: 'USUAL'}
     await bot.delete_webhook(drop_pending_updates=True)
-    await message.answer(f'Hey! - {vip_usual[IsVipUser_func(message)]}\n and {ad_us[IsAdmin_func(message)]}', reply_markup=usual_cat_jokes_key().as_markup(resize_keyboar=True, input_field_placeholder='Кнопки ниже'))
+    await message.answer(f'Hey! - {level[IsVipUser_func(message)]}\n and {ad_level[IsAdmin_func(message)]}', reply_markup=usual_cat_jokes_key().as_markup(resize_keyboar=True, input_field_placeholder='Кнопки ниже'))
     log.info('Starting bot')
 
 

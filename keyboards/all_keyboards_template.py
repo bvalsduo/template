@@ -2,23 +2,6 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ## обычная
 #
 # # обычный способ

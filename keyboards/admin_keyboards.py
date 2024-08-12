@@ -26,5 +26,11 @@ ad_vip_us_key = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='USUAL', callback_data='usual')],
 ], resize_keyboard=True, sizes=2)
 
+yn_key = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='YES', callback_data='YES')],
+    [InlineKeyboardButton(text='NO', callback_data='NO')]
+], resize_keyboard=True, sizes=2)
+
+
 
 
