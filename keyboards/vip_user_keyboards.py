@@ -3,7 +3,9 @@ from aiogram.utils.keyboard import (InlineKeyboardButton, InlineKeyboardBuilder,
 from data.jokes import vip_cat_jokes
 
 
-vip_lst_cats = ['Бородатые анекдоты', 'Злые анекдоты', 'Добрые анекдоты', 'Семейные анекдоты', 'По армейскому госту']
+# vip_lst_cats = ['Бородатые анекдоты', 'Злые анекдоты', 'Добрые анекдоты', 'Семейные анекдоты', 'По армейскому госту']
+
+vip_lst_cats = list(vip_cat_jokes.keys())
 
 # keyboard with categories for vip user
 def vip_cat_jokes_key(new_cat=''):
@@ -23,5 +25,13 @@ def vip_cat_jokes_inds(category):
     for num in range(1, len(vip_cat_jokes[category]) + 1):
         numbers.add(InlineKeyboardButton(text=f'{num}', callback_data=f'{num - 1}-{category}'))
     return numbers.adjust(5, 5)
+
+
+
+
+
+
+
+
 
 
