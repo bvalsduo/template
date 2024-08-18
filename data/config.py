@@ -12,6 +12,7 @@ admin_ids = [1155846288]
 #    git remote add origin git@github.com:bvalsduo/git_cmd_test.git  # доступ по SSH
 #
 #
+#    надо написать норм .gitignore файл
 #    git add 'file name'/ '.'        #добавление файла к отслеживанию/весь проект, кроме файлов и папок в .gitignore
 #    git commit -m 'комм'            #коммитить с коментарием
 #    git branch -M main              # это обязательно только в самом начале

@@ -47,3 +47,47 @@ contacts_key = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Telegram', url='https://web.telegram.org/k/#@some_gringo')],
     [InlineKeyboardButton(text='send email message', url='https://mail.google.com/mail/u/0/#inbox?compose=CllgCJvlqsDHPVfNTQpCwDktfcnKVNVxlCRhKMqQqCRzXHFXBSghFRsGGdSvPJnQSSlDfrbqfcg')]  # https://mail.google.com/
 ], resize_keyboard=True, sizes=1)
+
+
+def dct_rename(cats, old_cat_name, new_cat_name):
+    matrix_lst = []
+    for k, v in cats.items():
+        if k == old_cat_name:
+            k = new_cat_name
+        matrix_lst.append([k,v])
+
+    dct_matrix_lst = {}
+    for item in matrix_lst:
+        dct_matrix_lst[item[0]] = item[1]
+
+    return dct_matrix_lst
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

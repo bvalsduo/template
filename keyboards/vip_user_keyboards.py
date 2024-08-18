@@ -2,11 +2,7 @@ from aiogram.utils.keyboard import (InlineKeyboardButton, InlineKeyboardBuilder,
                                     ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardBuilder)
 from data.jokes import vip_cat_jokes
 
-
-# vip_lst_cats = ['Бородатые анекдоты', 'Злые анекдоты', 'Добрые анекдоты', 'Семейные анекдоты', 'По армейскому госту']
-
-vip_lst_cats = list(vip_cat_jokes.keys())
-
+vip_lst_cats = ['Бородатые анекдоты', 'Злые анекдоты', 'Добрые анекдоты', 'Семейные анекдоты', 'По армейскому госту']
 # keyboard with categories for vip user
 def vip_cat_jokes_key(new_cat=''):
     if new_cat:
