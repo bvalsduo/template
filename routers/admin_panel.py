@@ -140,31 +140,42 @@ async def change_cat_new_name(message: Message, state: FSMContext):
     await state.set_state(Admin.chng_cat)
     log.info(f'chng cat name succes, set chng name')
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-# change category state, change category name
-@rout_admin.message(StateFilter(Admin.chng_cat), F.text)
-async def change_name(message: Message, state: FSMContext):
-    level = (await state.get_data())['chng_cat_level']
+@rout_admin.message(StateFilter(Admin.chng_cat), lambda x: x.isalpha())
+async def change_cat_name(message: Message, state: FSMContext):
     old_cat_name = (await state.get_data())['chng_cat_old_name']
+    level = (await state.get_data())['chng_cat_level']
     new_cat_name = message.text
-    global vip_lst_cats, vip_cat_jokes, vip_cat_jokes_key, \
-           usual_lst_cats, usual_cat_jokes, usual_cat_jokes_key
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     cat_dct = {'VIP': [vip_lst_cats, vip_cat_jokes, vip_cat_jokes_key],
                'USUAL': [usual_lst_cats, usual_cat_jokes, usual_cat_jokes_key]}
 
-    cat_dct[level][1] = dct_rename(cat_dct[level][1], old_cat_name, new_cat_name)
-    cat_dct[level][0] = list(cat_dct[level][1].keys())
-    print(cat_dct[level][1], cat_dct[level][0])
-    print(usual_lst_cats, usual_cat_jokes)
-    await message.answer(f'{old_cat_name} -> {new_cat_name}\n/back чтобы вернуться и поменять данные',
-                         reply_markup=cat_dct[level][2]().as_markup(resize_keyboard=True))
-    await message.answer(f'что то еще?',
-                         reply_markup=admin_actions().as_markup(resize_keyboard=True,
-                                                                input_field_placeholder='клавиатура обновлена'))
-    await state.set_state(Admin.selection_state)
-    log.info(f'del_cat succes, set state selection state')
+    
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# # change category state, change category name
+# @rout_admin.message(StateFilter(Admin.chng_cat), F.text)
+# async def change_name(message: Message, state: FSMContext):
+#     level = (await state.get_data())['chng_cat_level']
+#     old_cat_name = (await state.get_data())['chng_cat_old_name']
+#     new_cat_name = message.text
+#     # global vip_lst_cats, vip_cat_jokes, vip_cat_jokes_key, \
+#     #        usual_lst_cats, usual_cat_jokes, usual_cat_jokes_key
+#     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#     cat_dct = {'VIP': [vip_lst_cats, vip_cat_jokes, vip_cat_jokes_key],
+#                'USUAL': [usual_lst_cats, usual_cat_jokes, usual_cat_jokes_key]}
+#
+#     cat_dct[level][1] = dct_rename(cat_dct[level][1], old_cat_name, new_cat_name)
+#     cat_dct[level][0] = list(cat_dct[level][1].keys())
+#     # print(cat_dct[level][1], cat_dct[level][0])
+#     # print(usual_lst_cats, usual_cat_jokes)
+#     await message.answer(f'{old_cat_name} -> {new_cat_name}\n/back чтобы вернуться и поменять данные',
+#                          reply_markup=cat_dct[level][2]().as_markup(resize_keyboard=True))
+#     await message.answer(f'что то еще?',
+#                          reply_markup=admin_actions().as_markup(resize_keyboard=True,
+#                                                                 input_field_placeholder='клавиатура обновлена'))
+#     await state.set_state(Admin.selection_state)
+#     log.info(f'del_cat succes, set state selection state')
 
 
 # delete category state, choose category
